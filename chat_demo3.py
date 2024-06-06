@@ -21,25 +21,17 @@ import ipdb
 BOX_TAG_PATTERN = r"<box>([\s\S]*?)</box>"
 PUNCTUATION = "！？。＂＃＄％＆＇（）＊＋，－／：；＜＝＞＠［＼］＾＿｀｛｜｝～｟｠｢｣､、〃》「」『』【】〔〕〖〗〘〙〚〛〜〝〞〟〰〾〿–—‘’‛“”„‟…‧﹏."
 
-url = 'http://localhost:22223/chat'
-url_image = 'http://localhost:22221/getv'
+url = 'http://localhost:22223/chat'  # chat的后端服务器
+url_image = 'http://localhost:22221/getv'  # 获取视频的后端服务器
 share = False
 inbrowser = False
 server_port = 9933
 server_name = '127.0.0.1'
-img_savepath = '/home/tzheng2/workspace/scir-y1/demo_server/assets'
-temp_video = 'output.mp4'
-custom_js = """
-<script>
-    document.addEventListener('keydown', function(event) {
-        if (event.key === ' ' && !event.shiftKey) {
-            event.preventDefault();  // 防止空格键默认行为
-            document.getElementById('submit-btn').click();  // 精确点击 submit_btn 按钮
-        }
-    });
-</script>
-"""
+img_savepath = '/home/tzheng2/workspace/scir-y1/demo_server/assets'  # 后端存放图像的地址
+local_img_path = 'C:\\Users\\tanthen\\AppData\\Local\\Temp\\gradio'  # demo端上传文件后存放的temp文件放在本地的位置
+temp_video = 'output.mp4'  # 存放到前端的视频文件
 
+# base64编码函数，将文件路径对应的图像编码为字符串形式，用于传送到后端
 def encode_base64_str(imgfile):
     with open(imgfile, 'rb') as f:
         encoded_str = base64.b64encode(f.read())
@@ -112,9 +104,8 @@ def _launch_demo():
         match = re.search(pattern, message)
         if match:
             file_path = message[match.span()[0] + 5: match.span()[1] - 6]
-            pre = 'C:\\Users\\tanthen\\AppData\\Local\\Temp\\gradio'
             file_path = '\\'.join(file_path.split('/')[-2:])
-            file_path = os.path.join(pre, file_path)
+            file_path = os.path.join(local_img_path, file_path)
             encoding_string = encode_base64_str(imgfile=file_path)
         else:
             encoding_string = ''
